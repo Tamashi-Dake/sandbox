@@ -1,3 +1,4 @@
+import AntdTabs from "./components/common/Tabs";
 import { GlobalStyle } from "./components/styled/GlobalStyles";
 import StyledButton from "./components/styled/StyledButton";
 import Theme from "./theme";
@@ -11,6 +12,7 @@ function App() {
           <p>Click me</p>
         </StyledButton>
       </div>
+      <AntdTabs />
     </Theme>
   );
 }
