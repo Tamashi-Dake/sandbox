@@ -3,4 +3,5 @@ export interface IUser {
   name: string;
   kia: boolean;
   worker: boolean;
+  age: number;
 }

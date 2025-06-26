@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { CreateUserDto, UpdateUserDto } from 'src/dto/user.dto';
 import { IUser } from 'src/types/users.type';
 
 @Injectable()
@@ -9,30 +10,35 @@ export class UsersService {
       name: 'Leanne Graham',
       kia: true,
       worker: true,
+      age: 1,
     },
     {
       id: '2',
       name: 'Ervin Howell',
       kia: false,
       worker: true,
+      age: 12,
     },
     {
       id: '3',
       name: 'Clementine Bauch',
       kia: true,
       worker: false,
+      age: 18,
     },
     {
       id: '4',
       name: 'Patricia Lebsack',
       kia: false,
       worker: false,
+      age: 25,
     },
     {
       id: '5',
       name: 'Chelsey Dietrich',
       kia: true,
       worker: true,
+      age: 30,
     },
   ];
 
@@ -60,10 +66,19 @@ export class UsersService {
   }
 
   findOneUser(userID: string) {
-    return this.user.filter((item) => item.id === userID);
+    const user = this.user.filter((item) => item.id === userID);
+    if (user.length === 0)
+      throw new NotFoundException('Are you sure this is the right ID?');
+    return user;
+  }
+  findUserWithSameAge(age: number) {
+    const user = this.user.filter((item) => item.age === age);
+    if (user.length === 0)
+      throw new NotFoundException(`We don't have any user at that age`);
+    return user;
   }
 
-  createUser(user: Omit<IUser, 'id'>) {
+  createUser(user: CreateUserDto) {
     const max = 20;
     const min = 10;
     const randomId = Math.random() * (max - min) + min;
@@ -75,7 +90,7 @@ export class UsersService {
     return this.user;
   }
 
-  updateUser(id: string, userUpdateData: Omit<IUser, 'id'>) {
+  updateUser(id: string, userUpdateData: UpdateUserDto) {
     const userNeedUpdate = this.user.filter((item) => item.id === id).pop();
     if (!userNeedUpdate) {
       return "We don't have any user with that id, check your param again";

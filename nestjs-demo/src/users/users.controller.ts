@@ -4,12 +4,14 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
+  ValidationPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { IUser } from 'src/types/users.type';
+import { CreateUserDto, UpdateUserDto } from 'src/dto/user.dto';
 
 @Controller('users')
 export class UsersController {
@@ -34,6 +36,11 @@ export class UsersController {
 
     return this.usersService.findUsersWithQuery(worker, kia);
   }
+  @Get('age/:age')
+  //Pipe: có thể dùng để tranform hoặc validate
+  findUserWithSameAge(@Param('age', ParseIntPipe) age: number) {
+    return this.usersService.findUserWithSameAge(age);
+  }
 
   @Get(':id') // GET /users/:id
   findOneUser(@Param('id') id: string) {
@@ -48,15 +55,16 @@ export class UsersController {
     return []; // { id: worker}
   }
 
+  // Có thể validate data khi tạo/sửa bằng DTO = Data tranfer object (schema)
   @Post()
-  createUser(@Body() user: Omit<IUser, 'id'>) {
+  createUser(@Body(ValidationPipe) user: CreateUserDto) {
     return this.usersService.createUser(user);
   }
 
   @Patch(':id')
   updateUser(
     @Param('id') id: string,
-    @Body() updateUserData: Omit<IUser, 'id'>,
+    @Body(ValidationPipe) updateUserData: UpdateUserDto,
   ) {
     return this.usersService.updateUser(id, updateUserData);
   }
